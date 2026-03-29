@@ -3,19 +3,20 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
 
-class StorePostRequest extends FormRequest
+
+class UpdatePostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -28,7 +29,7 @@ class StorePostRequest extends FormRequest
         return [
             'category_id' => 'required|exists:categories,id',
             'title' => 'required|string|min:5|max:255',
-            'slug' => 'nullable|string|unique:posts,slug',
+            'slug' => 'nullable|string|unique:posts,slug,' . $this->route('post')->id,
             'content' => 'required|string|min:50',
             'status' => 'sometimes|in:draft,published',
         ];
@@ -37,11 +38,8 @@ class StorePostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'category_id.required' => 'Kategori wajib dipilih',
             'category_id.exists' => 'Kategori tidak ditemukan',
-            'title.required' => 'Judul wajib diisi',
             'title.min' => 'Judul minimal 5 karakter',
-            'content.required' => 'Konten wajib diisi',
             'content.min' => 'Konten minimal 50 karakter',
         ];
     }
