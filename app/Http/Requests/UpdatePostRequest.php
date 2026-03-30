@@ -7,8 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 
-
-
 class UpdatePostRequest extends FormRequest
 {
     /**
@@ -27,10 +25,10 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => 'required|exists:categories,id',
-            'title' => 'required|string|min:5|max:255',
+            'category_id' => 'sometimes|exists:categories,id',
+            'title' => 'sometimes|string|min:5|max:255',
             'slug' => 'nullable|string|unique:posts,slug,' . $this->route('post')->id,
-            'content' => 'required|string|min:50',
+            'content' => 'sometimes|string|min:50',
             'status' => 'sometimes|in:draft,published',
         ];
     }
@@ -44,12 +42,12 @@ class UpdatePostRequest extends FormRequest
         ];
     }
 
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'status'=> 'errors',
-            'message' => 'validasi gagal',
-            'errors' => $validator->errors(),
-        ], 422));
-    }
+        protected function failedValidation(Validator $validator)
+        {
+            throw new HttpResponseException(response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422));
+        }
 }
